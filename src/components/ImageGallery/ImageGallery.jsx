@@ -1,5 +1,7 @@
 import { Component } from "react";
 import PropTypes from 'prop-types';
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import { ThreeDots } from  'react-loader-spinner'
 import s from './ImageGallery.module.css'
 import ImageGalleryItem from "./ImageGalleryItem/ImageGalleryItem";
 
@@ -13,10 +15,6 @@ export default class ImageGallery extends Component{
     componentDidUpdate(prevProps, prevState) {
         const prevName = prevProps.imageName;
         const nextName = this.props.imageName;
-
-        if (this.state.images === []) {
-            return (console.log('hto'))
-        }
         
         // якщо попередній пошук відрізняється він наступного то ми шукаємо
         if (prevName !== nextName) {
@@ -50,7 +48,11 @@ export default class ImageGallery extends Component{
         }
 
         if (status === 'pending') {
-            return <div>Завантаження</div>
+            return (
+                <>
+                    <ThreeDots color="#3f51b5" height={80} width={80} />
+                </>
+            )
         }
 
         if (status === 'rejected') {
@@ -76,5 +78,5 @@ export default class ImageGallery extends Component{
 };
 
 ImageGallery.propTypes = {
-    images: PropTypes.array.isRequired
+    images: PropTypes.array
 }

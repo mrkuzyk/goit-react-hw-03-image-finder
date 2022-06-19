@@ -12,7 +12,7 @@ const ImageGalleryItem = ({ id, webformatURL, tags }) => {
 export default ImageGalleryItem;
 
 ImageGalleryItem.propTypes = {
-    id: PropTypes.number.isRequired,
+    id: PropTypes.number,
     webformatURL: PropTypes.string.isRequired,
     tags: PropTypes.string.isRequired
 }
