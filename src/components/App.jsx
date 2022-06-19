@@ -1,5 +1,7 @@
 import { Component } from 'react';
+import ImageGallery from './ImageGallery/ImageGallery';
 import Searchbar from './Searchbar/Searchbar'
+import s from './App.module.css'
 
 export class App extends Component {
   state = {
@@ -12,13 +14,12 @@ export class App extends Component {
 
   render() {
     return (
-      <div>
-        <header>
+      <div className={s.App}>
           <Searchbar
             // onSubmit це пропси, а не слухач подій
             onSubmit={this.handleFormSubmit}
           />
-        </header>
+        <ImageGallery imageName={ this.state.imageName} />
       </div>
     )
   };
