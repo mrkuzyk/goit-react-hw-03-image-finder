@@ -1,20 +1,24 @@
 import { Component } from 'react';
-import PropTypes from 'prop-types';
+import Searchbar from './Searchbar/Searchbar'
 
 export class App extends Component {
+  state = {
+    imageName: '',
+  };
+
+  handleFormSubmit = imageName => {
+    this.setState({imageName})
+  };
+
   render() {
     return (
-      <div
-        style={{
-          height: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontSize: 40,
-          color: '#010101'
-        }}
-      >
-        React homework template
+      <div>
+        <header>
+          <Searchbar
+            // onSubmit це пропси, а не слухач подій
+            onSubmit={this.handleFormSubmit}
+          />
+        </header>
       </div>
     )
   };
