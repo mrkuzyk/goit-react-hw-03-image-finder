@@ -1,9 +1,11 @@
 import { Component } from "react";
 import PropTypes from 'prop-types';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import { ThreeDots } from  'react-loader-spinner'
-import s from './ImageGallery.module.css'
-import ImageGalleryItem from "./ImageGalleryItem/ImageGalleryItem";
+import { ThreeDots } from 'react-loader-spinner';
+import s from './ImageGallery.module.css';
+import ImageGalleryItem from "../ImageGalleryItem/ImageGalleryItem";
+import Button from '../Button/Button';
+import { StartSearch, ImageNotFound } from '../messageTitle/messageTitle';
 
 export default class ImageGallery extends Component{
     state = {
@@ -78,15 +80,11 @@ export default class ImageGallery extends Component{
                 // status: 'rejected'
                 loader: false
             }))
-        
-        // const loadButton = document.getElementById("load-more");
-        // console.log(loadButton);
-        // loadButton.scrollIntoView({block: "center", behavior: "smooth"});
     };
 
     render() {
         const { imageName } = this.props;
-        const { error, images, status, totalHits, perPage, page, loader } = this.state;
+        const { error, images, totalHits, perPage, page, loader } = this.state;
         const pages = totalHits / perPage; //рахую кількість сторінок
 
         // якщо початковий стан
@@ -131,8 +129,12 @@ export default class ImageGallery extends Component{
         // }
         return (
             <div className="s.container">
-                {!imageName && <h1>Введіть назву зображення</h1>}
-                {totalHits === 0 && <h1>Незнайдено зображень з ім'ям {this.props.imageName}</h1>}
+                {!imageName && <StartSearch/>}
+                {totalHits === 0 && 
+                    <ImageNotFound
+                        name={ this.props.imageName}
+                    />
+                }
                 {error && <h1>{error.message}</h1>}
                 {loader &&
                     <div className={s.loader}>
@@ -149,7 +151,11 @@ export default class ImageGallery extends Component{
                             />)}
                     </ul>
                 }
-                { page<pages && <button type="button" id="load-more" onClick={this.morePageClick} className={s.btn}>Load more</button>}
+                {page < pages &&
+                    <Button
+                        onClick={this.morePageClick}
+                    />
+                }
                 
             </div>
         )
