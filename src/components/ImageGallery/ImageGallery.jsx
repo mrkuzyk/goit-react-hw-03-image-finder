@@ -1,22 +1,24 @@
 import { Component } from "react";
 import PropTypes from 'prop-types';
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import { ThreeDots } from 'react-loader-spinner';
 import s from './ImageGallery.module.css';
-import ImageGalleryItem from "../ImageGalleryItem/ImageGalleryItem";
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import Button from '../Button/Button';
 import { StartSearch, ImageNotFound } from '../messageTitle/messageTitle';
+import Loader from '../Loader/Loader';
+import Modal from '../Modal/Modal';
 
 export default class ImageGallery extends Component{
     state = {
         images: [],
         error: null,
-        // status: 'idle',
+        loader: false,
         totalHits: null,
         page: 1,
-        perPage: 20,
+        perPage: 12,
         searchName: '',
-        loader: false
+        showModal: false,
+        largeImage: '',
+        imageTags: '',
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -82,51 +84,26 @@ export default class ImageGallery extends Component{
             }))
     };
 
+    galleryItemClick = (largeImage, imageTags) => {
+        // console.log(imageTags);
+        this.setState({
+            largeImage,
+            imageTags
+        })
+        this.toggleModal()
+    }
+    
+    toggleModal = () => {
+        this.setState(state => ({
+            showModal: !state.showModal
+        }))
+    }
+
     render() {
         const { imageName } = this.props;
-        const { error, images, totalHits, perPage, page, loader } = this.state;
+        const { error, images, totalHits, perPage, page, loader, showModal, largeImage, imageTags} = this.state;
         const pages = totalHits / perPage; //рахую кількість сторінок
 
-        // якщо початковий стан
-        // if (status === 'idle') {
-        //     return <h1>Введіть назву зображення</h1>
-        // }
-
-        // якщо завантажується то включаєтьсч лоадер
-        // if (status === 'pending') {
-        //     return (
-        //         <div className={s.loader}>
-        //             <ThreeDots color="#3f51b5" height={80} width={80} />
-        //         </div>
-        //     )
-        // }
-
-        // якщо помилка
-        // if (status === 'rejected') {
-        //     return <h1>{error.message}</h1>
-        // }
-
-        // якщо користувач введе білібєрду
-        // if (images.length === 0) {
-        //     return <h1>Незнайдено зображень з ім'ям {this.props.imageName}</h1>
-        // }
-
-        // якщо запит успішний
-        // if (status === 'resolved') { 
-        //     return (
-        //         <>
-        //             <ul className={s.gallery}>
-        //                 {images.map(({ id, webformatURL, tags }) =>
-        //                     <ImageGalleryItem
-        //                         key={id}
-        //                         webformatURL={webformatURL}
-        //                         tags={tags}
-        //                     />)}
-        //             </ul>
-        //             {page < pages && <div><button type="button" id="load-more" onClick={this.morePageClick} className={s.btn}>Load more</button></div>}
-        //         </>
-        //     )
-        // }
         return (
             <div className="s.container">
                 {!imageName && <StartSearch/>}
@@ -136,18 +113,14 @@ export default class ImageGallery extends Component{
                     />
                 }
                 {error && <h1>{error.message}</h1>}
-                {loader &&
-                    <div className={s.loader}>
-                        <ThreeDots color="#3f51b5" height={80} width={80} />
-                    </div>
-                }
+                {loader && <Loader/> }
                 {this.state.images && 
                     <ul className={s.gallery}>
-                        {images.map(({ id, webformatURL, tags }) =>
+                        {images.map(( image ) =>
                             <ImageGalleryItem
-                                key={id}
-                                webformatURL={webformatURL}
-                                tags={tags}
+                                key={image.id}
+                                image={image}
+                                onClick={this.galleryItemClick}
                             />)}
                     </ul>
                 }
@@ -156,7 +129,13 @@ export default class ImageGallery extends Component{
                         onClick={this.morePageClick}
                     />
                 }
-                
+                {showModal &&
+                    <Modal
+                        url={largeImage}
+                        alt={imageTags}
+                        onClick={this.toggleModal}
+                    />
+                }
             </div>
         )
     };
