@@ -22,15 +22,20 @@ export default class ImageGallery extends Component{
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const {page, perPage} = this.state;
-        const prevName = prevProps.imageName;
-        const nextName = this.props.imageName;
+        const {perPage} = this.state;
+        const prevName = prevProps.imageName; // значення попереднього пошуку
+        const nextName = this.props.imageName; // значення теперішнього пошуку
+        const startSearshPage = 1; // примусово починаю з першої сторінки
+
         
         // якщо попередній пошук відрізняється він наступного то ми шукаємо
         if (prevName !== nextName) {
             // this.setState({status: 'pending'}) //включаю лоадер
-            this.setState({loader: true})
-            fetch(`https://pixabay.com/api/?q=${nextName}&page=${page}&key=27124011-562ac77f1fd2864e5ddfeb16c&image_type=photo&orientation=horizontal&per_page=${perPage}`)
+            this.setState({
+                loader: true, // включаю лоадер
+                images: [], // очищую масив картинок
+            })
+            fetch(`https://pixabay.com/api/?q=${nextName}&page=${startSearshPage}&key=27124011-562ac77f1fd2864e5ddfeb16c&image_type=photo&orientation=horizontal&per_page=${perPage}`)
                 .then(response => {
                     if (response.ok) {
                         return response.json()
@@ -43,12 +48,13 @@ export default class ImageGallery extends Component{
                 .then(images => {
                     // console.log(images);
                     this.setState(prevState => ({
-                            searchName: nextName,
-                            images: images.hits,
-                            // status: 'resolved',
-                            loader: false,
-                            totalHits: images.totalHits, 
-                            page: 1 // кожен новий пошук починається з 1 сторінки
+                        searchName: nextName,
+                        images: images.hits,
+                        // status: 'resolved',
+                        loader: false, // виключаю лоадер після загрузки
+                        totalHits: images.totalHits, // загальна кількість картинок
+                        page: 1 // кожен новий пошук починається з 1 сторінки
+
                         }))
                 })
                 .catch(error => this.setState({
@@ -62,8 +68,8 @@ export default class ImageGallery extends Component{
     morePageClick = () => {
         const {searchName, page, perPage} = this.state;
         
-        // this.setState({ status: 'pending' }) //включаю лоадер
-        this.setState({loader: true})
+        // this.setState({ status: 'pending' }) 
+        this.setState({loader: true}) //включаю лоадер
         
         fetch(`https://pixabay.com/api/?q=${searchName}&page=${page +1}&key=27124011-562ac77f1fd2864e5ddfeb16c&image_type=photo&orientation=horizontal&per_page=${perPage}`)
             .then(response => {
@@ -71,10 +77,10 @@ export default class ImageGallery extends Component{
             })
             .then(images => {
                 this.setState(prevState => ({
-                    images: [...prevState.images, ...images.hits],
+                    images: [...prevState.images, ...images.hits], // додаю наступні сторінки до попердніх
                     // status: 'resolved',
                     loader: false,
-                    page: prevState.page +1
+                    page: prevState.page +1 // записую нову сторінку в стейдж
                 }))
             })
             .catch(error => this.setState({
@@ -87,8 +93,8 @@ export default class ImageGallery extends Component{
     galleryItemClick = (largeImage, imageTags) => {
         // console.log(imageTags);
         this.setState({
-            largeImage,
-            imageTags
+            largeImage, //приймаю і записую велику картинку
+            imageTags //приймаю і записую опис
         })
         this.toggleModal()
     }

@@ -4,14 +4,15 @@ import s from './Modal.module.css';
 
 class Modal extends Component {
     componentDidMount() {
-        window.addEventListener('keydown', this.modalClose);
+        window.addEventListener('keydown', this.modalClose); // слухач на клавіатуру
     };
     
     componentWillUnmount() {
-        window.removeEventListener('keydown', this.modalClose);
+        window.removeEventListener('keydown', this.modalClose); // вимикаю слухач щоб не висів
     };
     
     modalClose = event => {
+        // якщо натиснути еск чи клачнути на фон, то пропсами передасться функція закриття модалки
         if (event.code === 'Escape' || event.target === event.currentTarget) {
             this.props.onClick();
         };
